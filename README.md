@@ -1,5 +1,5 @@
 <h2 align="center">Rent appartment seeker</h2>
 
 <p align="center">
-<a href="https://github.com/ohonchar/wohnung-service/actions"><img alt="Actions Status" src="https://github.com/ohonchar/wohnung-service/workflows/maven/badge.svg"></a>
+[![Java CI with Maven](https://github.com/ohonchar/wohnung-service/actions/workflows/maven.yml/badge.svg)](https://github.com/ohonchar/wohnung-service/actions/workflows/maven.yml)
 </p>
