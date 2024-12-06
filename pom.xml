@@ -69,6 +69,20 @@
 			<version>5.9.2</version>
 		</dependency>
 
+		<!-- Long polling bot -->
+		<dependency>
+			<groupId>org.telegram</groupId>
+			<artifactId>telegrambots-springboot-longpolling-starter</artifactId>
+			<version>8.0.0</version>
+		</dependency>
+
+		<!-- OkHttp client implementation -->
+		<dependency>
+			<groupId>org.telegram</groupId>
+			<artifactId>telegrambots-client</artifactId>
+			<version>8.0.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

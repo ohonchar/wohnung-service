@@ -89,7 +89,7 @@ public class EmployeeController {
 
     @PostMapping("/{id}/execute")
     public ResponseEntity<String> executeUi() {
-        runUiService.executeUi();
+        runUiService.executeUi("");
         return ResponseEntity.ok().body("UI script finished");
     }
 
