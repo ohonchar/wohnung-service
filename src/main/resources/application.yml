@@ -15,4 +15,4 @@ spring:
     password: example
   bot:
     name: WohnungServiceBot
-    token: 7187221848:AAEDP5OGaUXzW49m8m7Q7vkrqxwxaMti7PE
+    token: 
