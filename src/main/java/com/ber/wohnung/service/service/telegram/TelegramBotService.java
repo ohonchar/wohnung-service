@@ -2,9 +2,9 @@ package com.ber.wohnung.service.service.telegram;
 
 import com.ber.wohnung.service.entity.UserData;
 import com.ber.wohnung.service.service.selenium.RunUiService;
+import com.ber.wohnung.service.utils.JasyptConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.BotSession;
@@ -31,18 +31,21 @@ import java.util.Map;
 @Component
 public class TelegramBotService implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
     @Autowired
-    private final RunUiService runUiService;
+    private RunUiService runUiService;
 
-    private static String botToken;
+    @Autowired
+    private UserRegistration userRegistration;
+
+    private final String botToken;
 
     private final TelegramClient telegramClient;
     private long chatId;
 
-    private Map<Long, UserData> registrationSession = new HashMap<>();
+    public static final Map<Long, UserData> registrationSession = new HashMap<>();
 
-    public TelegramBotService(RunUiService runUiService, @Value("${spring.bot.token}") String botToken) {
-        this.runUiService = runUiService;
-        TelegramBotService.botToken = botToken;
+    @Autowired
+    public TelegramBotService(@Value("${spring.bot.token}") String botToken, JasyptConfig jasyptConfig) {
+        this.botToken = jasyptConfig.standardPBEStringEncryptor().decrypt(botToken);
         telegramClient = new OkHttpTelegramClient(getBotToken());
     }
 
@@ -79,8 +82,7 @@ public class TelegramBotService implements SpringLongPollingBot, LongPollingSing
 
             if (messageText.equalsIgnoreCase("registration") || !registrationSession.isEmpty()) {
                 UserData userData = registrationSession.getOrDefault(chatId, new UserData());
-                message = handleUserMessage(messageText, userData);
-                registrationSession.put(chatId, userData);
+                message = userRegistration.handleUserMessage(chatId, messageText, userData);
             }
             executeRequest(message);
         }
@@ -109,44 +111,6 @@ public class TelegramBotService implements SpringLongPollingBot, LongPollingSing
         }
     }
 
-    private SendMessage handleUserMessage(String userMessage, UserData userData) {
-
-        SendMessage.SendMessageBuilder<?, ?> message = SendMessage.builder()
-                .chatId(chatId);
-        switch (userData.getState()) {
-            case START:
-                message.text("Welcome to the registration! Please enter your name:");
-                userData.setState(UserData.RegistrationState.NAME);
-                break;
-
-            case NAME:
-                userData.setName(userMessage);
-                message.text("Great! Now, please enter your email:");
-                userData.setState(UserData.RegistrationState.EMAIL);
-                break;
-
-            case EMAIL:
-                userData.setEmail(userMessage);
-                message.text(String.format("Please confirm your details:\n\nName: %s\nEmail: %s\n\nType 'confirm' to proceed or 'restart' to start over.",
-                        userData.getName(), userData.getEmail()));
-                userData.setState(UserData.RegistrationState.CONFIRMATION);
-                break;
-
-            case CONFIRMATION:
-                if (userMessage.equalsIgnoreCase("confirm")) {
-                    message.text("Thank you for registering! Your details have been saved.");
-                    registrationSession.remove(chatId); // Clear session after successful registration
-//                    registrationSession = new HashMap<>();
-                } else if (userMessage.equalsIgnoreCase("restart")) {
-                    message.text("Let's start over! Please enter your name:");
-                    userData.setState(UserData.RegistrationState.NAME);
-                } else {
-                    message.text("Invalid response. Type 'confirm' to proceed or 'restart' to start over.");
-                }
-                break;
-        }
-        return message.build();
-    }
 
     private ReplyKeyboardMarkup replayKeyboard() {
         // Create rows for the keyboard
@@ -166,7 +130,6 @@ public class TelegramBotService implements SpringLongPollingBot, LongPollingSing
         // Build the ReplyKeyboardMarkup
         return ReplyKeyboardMarkup.builder()
                 .keyboard(keyboard)
-                .inputFieldPlaceholder("hellosasha")
                 .resizeKeyboard(true) // Optional: Resize the keyboard
                 .oneTimeKeyboard(true) // Optional: Hide after use
                 .build();
