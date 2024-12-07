@@ -12,4 +12,7 @@ spring:
     driverClassName: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/employee?currentSchema=employees
     username: root
-    password: example
+    password: admin
+  bot:
+    name: WohnungServiceBot
+    token: cWYuvdlY1P5/pAXVjYqBom+ZS0KhwOao7vN/Cd7eSAcOATGG1bjr4gIi1cEnBp2fx4EZb/jlJ2XTKJKj5kpYEnTHgpDOacuT5ku10eE1Ubs=

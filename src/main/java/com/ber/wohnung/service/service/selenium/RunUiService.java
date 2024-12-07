@@ -3,6 +3,7 @@ package com.ber.wohnung.service.service.selenium;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -23,10 +24,14 @@ import java.util.Objects;
 public class RunUiService {
     private WebDriver driver;
 
-    public void executeUi() {
+    public void executeUi(String s) {
         WebDriverManager.chromedriver().setup();
         driver = selenoidCapabilities("http://localhost:4444/wd/hub");
+//        driver = new ChromeDriver();
         driver.get("https://www.google.com");
+
+        driver.findElement(By.xpath("//div[text()='Alle ablehnen']")).click();
+        driver.findElement(By.xpath("//form[@action='/search']//textarea")).sendKeys(s);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
