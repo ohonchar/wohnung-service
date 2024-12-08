@@ -24,10 +24,14 @@ import java.util.Objects;
 public class RunUiService {
     private WebDriver driver;
 
+    public void executeUi() {
+        executeUi("");
+    }
+
     public void executeUi(String s) {
         WebDriverManager.chromedriver().setup();
-        driver = selenoidCapabilities("http://localhost:4444/wd/hub");
-//        driver = new ChromeDriver();
+//        driver = selenoidCapabilities("http://localhost:4444/wd/hub");
+        driver = new ChromeDriver();
         driver.get("https://www.google.com");
 
         driver.findElement(By.xpath("//div[text()='Alle ablehnen']")).click();

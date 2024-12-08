@@ -69,11 +69,6 @@ public class TelegramBotService implements SpringLongPollingBot, LongPollingSing
             String messageText = update.getMessage().getText();
             chatId = update.getMessage().getChatId();
 
-            if (messageText.toLowerCase().contains("execute")) {
-                runUiService.executeUi(messageText.split(" ")[1]);
-                messageText = "This is your UI";
-            }
-
             if (messageText.equalsIgnoreCase("/start")) {
                 message = buildReplyKeyboard(messageText, replayKeyboard());
             } else {
@@ -82,7 +77,12 @@ public class TelegramBotService implements SpringLongPollingBot, LongPollingSing
 
             if (messageText.equalsIgnoreCase("registration") || !registrationSession.isEmpty()) {
                 UserData userData = registrationSession.getOrDefault(chatId, new UserData());
-                message = userRegistration.handleUserMessage(chatId, messageText, userData);
+                message = userRegistration.handleUserMessage(chatId, messageText, userData, this);
+            }
+
+            if (messageText.equalsIgnoreCase("Start searching")) {
+                runUiService.executeUi();
+                messageText = "This is your UI";
             }
             executeRequest(message);
         }
@@ -181,7 +181,7 @@ public class TelegramBotService implements SpringLongPollingBot, LongPollingSing
                 .build();
     }
 
-    private SendMessage buildReplyKeyboard(String messageText, ReplyKeyboardMarkup replyKeyboardMarkup) {
+    protected SendMessage buildReplyKeyboard(String messageText, ReplyKeyboardMarkup replyKeyboardMarkup) {
         return SendMessage // Create a message object
                 .builder()
                 .chatId(chatId)
@@ -190,7 +190,7 @@ public class TelegramBotService implements SpringLongPollingBot, LongPollingSing
                 .build();
     }
 
-    private void executeRequest(SendMessage message) {
+    protected void executeRequest(SendMessage message) {
         try {
             telegramClient.execute(message); // Sending our message object to user
         } catch (TelegramApiException e) {

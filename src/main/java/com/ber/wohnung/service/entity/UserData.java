@@ -1,6 +1,5 @@
 package com.ber.wohnung.service.entity;
 
-import jakarta.persistence.Entity;
 import lombok.Data;
 
 @Data
@@ -14,7 +13,8 @@ public class UserData {
         START,
         NAME,
         EMAIL,
-        CONFIRMATION
+        CONFIRMATION,
+        SEARCH
     }
 
     public UserData() {

@@ -23,6 +23,7 @@ public class Employee {
     private String lastName;
     private Integer age;
     private String designation;
+    private String email;
     private String phoneNumber;
     private LocalDate joinedOn;
     private String address;
